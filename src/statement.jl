@@ -90,3 +90,8 @@ end
 function _bind(stmt::Ptr{Void}, idx::Int, val::String)
     ccall((:cass_statement_bind_string, libcass), Cint, (Ptr{Void}, Cint, Cstring), stmt, idx, val)
 end
+
+_set_request_timeout(s::Statement, ms::Integer) = (
+    ccall((:cass_statement_set_request_timeout, libcass), Cint,
+            (Ptr{Void}, Cuint), s.ptr, ms);
+    s)

@@ -35,6 +35,8 @@ struct Driver
     end
 end
 
+include("cluster_options.jl")
+
 function connect(drv::Driver)
     connect_future = connect(drv.session, drv.cluster)
     wait(connect_future)
@@ -59,8 +61,11 @@ function execute(d::Driver, s::Statement)
     Future_C(future)
 end
 
-function execute(d::Driver, query::String)
+function execute(d::Driver, query::String, opt::Tuple{Symbol, Any}...)
     stmt = Statement(query) |> build
+    for pair in opt
+        option(pair...)(stmt)
+    end
     execute(d, stmt)
 end
 
