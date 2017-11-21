@@ -28,8 +28,8 @@ export OK, Driver, connect, free, execute
 struct Driver
     cluster::Cluster
     session::Session
-    function Driver(contact_points::String)
-        cluster = Cluster(contact_points)
+    function Driver(contact_points::String, port=9042)
+        cluster = Cluster(contact_points, port)
         session = Session()
         new(cluster, session)
     end
@@ -61,7 +61,10 @@ function execute(d::Driver, s::Statement)
     Future_C(future)
 end
 
-function execute(d::Driver, query::String, opt::Tuple{Symbol, Any}...)
+"""
+    execute(d::Driver, query::AbstractString, opt::Tuple{Symbol, Any}...) -> Future_C
+"""
+function execute(d::Driver, query::AbstractString, opt::Tuple{Symbol, Any}...)
     stmt = Statement(query) |> build
     for pair in opt
         option(pair...)(stmt)

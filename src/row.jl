@@ -1,5 +1,4 @@
 struct Row <: Iterable
-    ptr::Ptr{Void}
     values::DataArray{Any}
     fields::Fields
 end
@@ -11,7 +10,7 @@ function Row(ptr::Ptr{Void}, fields::Fields)
         isnull = ccall((:cass_value_is_null, libcass), Cint, (Ptr{Void},), col) == 1
         vals[i] = isnull ? NA : get_value(field[2], col)
     end
-    Row(ptr, vals, fields)
+    Row(vals, fields)
 end
 
 export Row
